@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Treskia — your bank already emails you every transaction</title>
+  <title>Treskia — personal finance app for India</title>
   <meta name="description" content="Treskia is a personal finance app for India that reads your banks' transaction-alert emails and turns them into spending you can actually see — entirely on your iPhone." />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Treskia — your bank already emails you every transaction" />
@@ -34,16 +34,17 @@
       padding:28px 0 0; }
     .wordmark { font-family:"Space Grotesk"; font-weight:700; font-size:22px;
       letter-spacing:-.01em; }
-    .wordmark::after { content:"."; color:var(--marigold); }
     .site-nav .links a { margin-left:28px; font-size:14px; color:var(--mist);
       text-decoration:none; }
     .site-nav .links a:hover { color:var(--ink); }
 
     .hero { display:grid; grid-template-columns: 1fr 1fr; gap:56px;
       align-items:center; padding:88px 0 72px; }
-    .hero h1 { font-size:clamp(34px,4.6vw,52px); line-height:1.08; margin:0 0 20px;
+    .hero h1 { font-size:clamp(44px,5.4vw,64px); line-height:1.05; margin:0 0 14px;
       font-weight:700; }
-    .hero h1 em { font-style:normal; color:var(--marigold); }
+    .hero .tagline { font-family:"Space Grotesk"; font-size:clamp(20px,2.4vw,26px);
+      line-height:1.3; font-weight:500; margin:0 0 18px; }
+    .hero .tagline em { font-style:normal; color:var(--marigold); }
     .hero .sub { color:var(--mist); font-size:18px; max-width:42ch; margin:0 0 32px; }
     .cta { display:inline-block; background:var(--ink); color:#fff; padding:14px 26px;
       border-radius:10px; font-weight:600; text-decoration:none; font-size:15px; }
@@ -122,10 +123,13 @@
 
     <div class="hero">
       <div>
-        <h1>Your bank already emails you every transaction.<br /><em>Treskia</em> makes them make sense.</h1>
-        <p class="sub">Treskia is a personal finance app for India that reads your banks'
-          transaction-alert emails and turns them into spending you can actually see —
-          entirely on your iPhone.</p>
+        <h1>Treskia</h1>
+        <p class="tagline">Your bank already emails you every transaction.
+          <em>Treskia</em> makes them make sense.</p>
+        <p class="sub">Treskia is a personal finance app for iPhone that shows you where
+          your money goes. It connects to your Gmail with read-only access, finds the
+          transaction-alert emails Indian banks send for every payment, and turns them
+          into a private spending view — parsed entirely on your device.</p>
         <a class="cta" href="mailto:gokusayon@gmail.com?subject=Treskia%20beta">Join the beta</a>
         <span class="cta-side">iOS 18+ · TestFlight</span>
       </div>
