@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A — Parse (light, engineered)</title>
+  <link rel="stylesheet" href="plan.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper:#FCFCFA; --ink:#16181D; --mist:#5D6470; --marigold:#F2A007;
+      --hl:#FFF3D6; --money:#0A7A4B; --line-soft:#E8E6E0;
+    }
+    body { margin:0; background:var(--paper); color:var(--ink);
+      font:16px/1.65 "Inter",system-ui,sans-serif; }
+    .site { max-width:1080px; margin:0 auto; padding:0 24px; }
+    .block { border:none; padding:0; margin:0; background:none; }
+    a { color:var(--ink); }
+    h1,h2 { font-family:"Space Grotesk",sans-serif; letter-spacing:-.02em; }
+    .mono { font-family:"IBM Plex Mono",monospace; }
+    :focus-visible { outline:3px solid var(--marigold); outline-offset:2px; }
+
+    nav.site-nav { display:flex; justify-content:space-between; align-items:center;
+      padding:28px 0 0; }
+    .wordmark { font-family:"Space Grotesk"; font-weight:700; font-size:22px;
+      letter-spacing:-.01em; }
+    .wordmark::after { content:"."; color:var(--marigold); }
+    .site-nav .links a { margin-left:28px; font-size:14px; color:var(--mist);
+      text-decoration:none; }
+    .site-nav .links a:hover { color:var(--ink); }
+
+    .hero { display:grid; grid-template-columns: 1fr 1fr; gap:56px;
+      align-items:center; padding:88px 0 72px; }
+    .hero h1 { font-size:clamp(34px,4.6vw,52px); line-height:1.08; margin:0 0 20px;
+      font-weight:700; }
+    .hero h1 em { font-style:normal; color:var(--marigold); }
+    .hero .sub { color:var(--mist); font-size:18px; max-width:42ch; margin:0 0 32px; }
+    .cta { display:inline-block; background:var(--ink); color:#fff; padding:14px 26px;
+      border-radius:10px; font-weight:600; text-decoration:none; font-size:15px; }
+    .cta:hover { background:#000; }
+    .cta-side { margin-left:16px; font-size:14px; color:var(--mist); }
+
+    /* Signature: email → parsed row */
+    .demo { position:relative; }
+    .email-card { border:1px solid var(--line-soft); border-radius:14px; background:#fff;
+      padding:20px 22px; box-shadow:0 12px 32px rgba(22,24,29,.06); }
+    .email-head { font-size:12.5px; color:var(--mist); border-bottom:1px solid var(--line-soft);
+      padding-bottom:12px; margin-bottom:14px; }
+    .email-head b { color:var(--ink); font-weight:600; }
+    .email-body { font-size:14px; line-height:1.8; }
+    .tok { border-radius:4px; padding:1px 3px; transition:background .4s; }
+    .demo.done .t-amt  { background:var(--hl); box-shadow:inset 0 -2px 0 var(--marigold); }
+    .demo.done .t-mer  { background:var(--hl); box-shadow:inset 0 -2px 0 var(--marigold); }
+    .demo.done .t-card { background:var(--hl); box-shadow:inset 0 -2px 0 var(--marigold); }
+    .arrow-down { text-align:center; color:var(--marigold); font-size:22px; margin:10px 0; }
+    .txn-row { display:flex; justify-content:space-between; align-items:center;
+      border:1px solid var(--line-soft); border-radius:12px; background:#fff;
+      padding:14px 18px; opacity:0; transform:translateY(-8px);
+      transition:opacity .5s .2s, transform .5s .2s; }
+    .demo.done .txn-row { opacity:1; transform:none; }
+    .txn-merchant { font-weight:600; font-size:15px; }
+    .txn-meta { font-size:12.5px; color:var(--mist); }
+    .txn-amt { font-family:"IBM Plex Mono"; font-weight:500; color:var(--money); font-size:16px; }
+    .demo-caption { text-align:center; font-size:13px; color:var(--mist); margin-top:14px; }
+
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; padding:56px 0; }
+    .step { border-top:3px solid var(--marigold); padding-top:18px; }
+    .step h3 { font-family:"Space Grotesk"; font-size:18px; margin:0 0 8px; }
+    .step p { color:var(--mist); font-size:14.5px; margin:0; }
+
+    .leaves { padding:56px 0; }
+    .leaves h2 { font-size:30px; margin:0 0 8px; }
+    .leaves .lead { color:var(--mist); margin:0 0 28px; }
+    table.facts { width:100%; border-collapse:collapse; font-size:15px; }
+    table.facts td { padding:14px 8px; border-top:1px solid var(--line-soft); }
+    table.facts td:last-child { text-align:right; font-family:"IBM Plex Mono"; font-size:14px; }
+    .never { color:var(--money); font-weight:500; }
+    .optin { color:var(--marigold); font-weight:500; }
+
+    .pledge { background:var(--ink); color:#F5F4F0; border-radius:18px;
+      padding:44px 48px; margin:24px 0 72px; }
+    .pledge h2 { color:#fff; font-size:26px; margin:0 0 12px; }
+    .pledge p { color:#B9BDC7; max-width:70ch; margin:0 0 10px; font-size:15px; }
+    .pledge .fine { font-size:13px; color:#8A8F9B; }
+
+    footer.site-footer { border-top:1px solid var(--line-soft); padding:28px 0 48px;
+      display:flex; justify-content:space-between; font-size:13.5px; color:var(--mist); }
+    footer.site-footer a { color:var(--mist); margin-right:22px; }
+
+    @media (max-width:820px){
+      .hero { grid-template-columns:1fr; padding:48px 0 40px; }
+      .steps { grid-template-columns:1fr; }
+      .pledge { padding:32px 24px; }
+      footer.site-footer { flex-direction:column; gap:12px; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .txn-row, .tok { transition:none; }
+    }
+  </style>
+</head>
+<body data-approval="off">
+  <div class="site">
+
+    <section class="block" data-block-id="a-nav" data-block-label="A · Nav">
+      <nav class="site-nav" aria-label="Site">
+        <span class="wordmark" data-cmt-id="a-wordmark">treskia</span>
+        <span class="links">
+          <a href="#how">How it works</a><a href="#privacy">Privacy</a><a href="#beta">Beta</a>
+        </span>
+      </nav>
+    </section>
+
+    <section class="block" data-block-id="a-hero" data-block-label="A · Hero (email→row parse)">
+      <div class="hero">
+        <div>
+          <h1 data-cmt-id="a-headline">Your bank already emails you every transaction.<br /><em>Treskia</em> makes them make sense.</h1>
+          <p class="sub">A personal finance app for India that reads your banks' transaction-alert
+            emails and turns them into spending you can actually see — entirely on your iPhone.</p>
+          <a class="cta" href="#beta" data-cmt-id="a-cta">Join the beta</a>
+          <span class="cta-side">iOS 18+ · TestFlight</span>
+        </div>
+        <div class="demo done" id="parse-demo" data-cmt-id="a-demo" data-cmt-label="Parse demo">
+          <div class="email-card">
+            <div class="email-head"><b>HDFC Bank InstaAlerts</b> · alerts@hdfcbank.net<br />Update on your HDFC Bank Credit Card</div>
+            <div class="email-body mono" style="font-size:13px">
+              Dear Customer, thank you for using HDFC Bank Card
+              <span class="tok t-card">XX4315</span> for
+              <span class="tok t-amt">Rs 417.00</span> at
+              <span class="tok t-mer">SWIGGY INSTAMART</span> on 18-07-2026 21:14:36.
+            </div>
+          </div>
+          <div class="arrow-down">↓</div>
+          <div class="txn-row">
+            <div>
+              <div class="txn-merchant">Swiggy Instamart</div>
+              <div class="txn-meta">Groceries · HDFC ··4315 · 18 Jul</div>
+            </div>
+            <div class="txn-amt">− ₹417</div>
+          </div>
+          <div class="demo-caption">Parsed on your phone. The email never goes anywhere.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" data-block-id="a-how" data-block-label="A · How it works" id="how">
+      <div class="steps">
+        <div class="step" data-cmt-id="a-step1">
+          <h3>Connect Gmail, read-only</h3>
+          <p>Sign in with Google. Treskia can read email — it can never send, delete,
+             or change anything. Revoke access anytime from your Google account.</p>
+        </div>
+        <div class="step" data-cmt-id="a-step2">
+          <h3>Your phone does the reading</h3>
+          <p>A filter finds bank alerts, bank-specific patterns extract the details, and an
+             on-device AI model handles the rest. Your emails are processed by your iPhone's
+             chip — not our servers. We don't have servers that see them.</p>
+        </div>
+        <div class="step" data-cmt-id="a-step3">
+          <h3>See where money goes</h3>
+          <p>Every card in one place: merchants, categories, trends, search. Built for Indian
+             banks — HDFC, ICICI, Kotak, SBI, Axis and more.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" data-block-id="a-leaves" data-block-label="A · What leaves your phone" id="privacy">
+      <div class="leaves">
+        <h2>What leaves your phone</h2>
+        <p class="lead">The complete list.</p>
+        <table class="facts">
+          <tr><td>Your emails</td><td class="never">Never</td></tr>
+          <tr><td>Your transactions</td><td class="never">Never</td></tr>
+          <tr><td>Your Google password</td><td class="never">Never seen — sign-in happens with Google</td></tr>
+          <tr><td>Anonymised email templates<br /><span style="color:var(--mist);font-size:13px">numbers, names and amounts stripped — helps Treskia learn a new bank's format</span></td>
+              <td class="optin">Only if you opt in, shown before sending</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="block" data-block-id="a-pledge" data-block-label="A · Privacy pledge">
+      <div class="pledge">
+        <h2>Private by architecture, not by promise</h2>
+        <p>Treskia's access to Gmail is limited to reading transaction-alert emails to show you
+           your own spending. All parsing and AI inference run on your device. We never transfer
+           Gmail data to our servers, never sell it, and never use it for ads.</p>
+        <p class="fine">Treskia's use of information received from Google APIs adheres to the
+           Google API Services User Data Policy, including the Limited Use requirements.</p>
+      </div>
+    </section>
+
+    <section class="block" data-block-id="a-footer" data-block-label="A · Footer" id="beta">
+      <footer class="site-footer">
+        <span>
+          <a href="#">Privacy policy</a><a href="#">Terms of use</a><a href="#">Contact</a>
+        </span>
+        <span>© 2026 Treskia · Built in India, runs on your iPhone</span>
+      </footer>
+    </section>
+
+  </div>
+  <script src="comments.js"></script>
+  <script>
+    // Loop the parse animation: reset → highlight tokens → reveal row.
+    const demo = document.getElementById('parse-demo');
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduced) {
+      demo.classList.remove('done');
+      const cycle = () => {
+        demo.classList.remove('done');
+        setTimeout(() => demo.classList.add('done'), 900);
+      };
+      setTimeout(() => demo.classList.add('done'), 900);
+      setInterval(cycle, 7000);
+    }
+  </script>
+</body>
+</html>
