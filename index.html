@@ -34,8 +34,10 @@
 
     nav.site-nav { display:flex; justify-content:space-between; align-items:center;
       padding:28px 0 0; }
-    .wordmark { font-family:"Space Grotesk"; font-weight:700; font-size:22px;
+    .wordmark { display:flex; align-items:center; gap:10px;
+      font-family:"Space Grotesk"; font-weight:700; font-size:22px;
       letter-spacing:-.01em; }
+    .wordmark svg { width:30px; height:30px; display:block; }
     .site-nav .links a { margin-left:28px; font-size:14px; color:var(--mist);
       text-decoration:none; }
     .site-nav .links a:hover { color:var(--ink); }
@@ -117,7 +119,15 @@
   <div class="site">
 
     <nav class="site-nav" aria-label="Site">
-      <span class="wordmark">Treskia</span>
+      <span class="wordmark">
+        <svg viewBox="0 0 100 100" role="img" aria-label="Treskia logo">
+          <rect width="100" height="100" rx="22.5" fill="#16181D"/>
+          <text x="44" y="76" font-size="78" font-weight="700" fill="#F5F4F0"
+                text-anchor="middle" font-family="Space Grotesk, sans-serif">t</text>
+          <circle cx="72" cy="70" r="7" fill="#F2A007"/>
+        </svg>
+        Treskia
+      </span>
       <span class="links">
         <a href="#how">How it works</a><a href="#privacy">Privacy</a><a href="#beta">Beta</a>
       </span>
